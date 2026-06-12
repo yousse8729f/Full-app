@@ -1,0 +1,108 @@
+@import 'tailwindcss';
+
+.login-container {
+  @apply flex min-h-screen bg-white;
+}
+
+/* --- Form Side --- */
+.form-side {
+  @apply flex flex-col w-full lg:w-[45%] p-8 lg:p-16 relative;
+}
+
+.nav-header {
+  @apply flex justify-between items-center mb-20;
+}
+
+.nav-btn {
+  @apply flex items-center gap-2 text-sm font-semibold text-slate-500 hover:text-[#355C7D] transition-colors cursor-pointer;
+  mat-icon { font-size: 20px; width: 20px; height: 20px; }
+}
+
+.form-wrapper {
+  @apply max-w-[400px] mx-auto w-full;
+}
+
+.header-text {
+  @apply mb-10;
+  h1 { @apply text-4xl font-bold text-[#355C7D] mb-2; }
+  p { @apply text-slate-400 font-medium; }
+}
+
+.login-form {
+  @apply space-y-4;
+}
+
+.full-width {
+  @apply w-full;
+}
+
+::ng-deep .mat-mdc-text-field-wrapper {
+  @apply bg-slate-50/50;
+}
+
+.form-options {
+  @apply flex justify-between items-center text-sm mb-6;
+  .forgot-link { @apply text-[#F8B195] font-bold cursor-pointer hover:underline; }
+}
+
+.submit-btn {
+  @apply w-full py-4 rounded-xl bg-[#355C7D] text-white font-bold flex items-center justify-center gap-2 
+         transition-all duration-300 shadow-lg shadow-blue-900/20 hover:bg-[#2a4a65] hover:-translate-y-1;
+  
+  &:disabled { @apply opacity-50 cursor-not-allowed translate-y-0 shadow-none; }
+}
+
+/* --- Image Side --- */
+.image-side {
+  @apply hidden lg:flex flex-1 relative bg-[#355C7D] overflow-hidden;
+  
+  img {
+    @apply absolute inset-0 w-full h-full object-cover mix-blend-overlay opacity-60;
+  }
+
+  .overlay-content {
+    @apply relative z-10 m-auto text-center p-12;
+    h2 { @apply text-4xl font-bold text-white mb-4; }
+    p { @apply text-blue-100 text-lg max-w-md; }
+  }
+}
+
+.cursor-pointer { cursor: pointer; }
+    ::ng-deep .mat-mdc-input-element {
+  color: #000 !important;
+  border: 1px solid black;
+}
+
+::ng-deep .mat-mdc-floating-label {
+  color: #555 !important;
+}
+::ng-deep .mat-mdc-form-field-infix {
+  padding-left: 10px !important; /* Gives text breathing room from the curve */
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading {
+  @apply rounded-l-2xl;
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing {
+  @apply rounded-r-xl;
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: #aaa !important;
+  border-width: 1px !important;
+}
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch
+
+{
+  border-color:#F8B195 !important ;
+  border-width: 1px !important;
+
+
+}
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label,
+::ng-deep .mat-mdc-form-field.mat-focused .mat-icon{
+    color: #F8B195 !important  ;
+
+}

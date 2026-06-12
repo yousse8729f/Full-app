@@ -1,0 +1,62 @@
+<p-toast position="top-right" [baseZIndex]="10000"></p-toast>
+<div class="container p-5">
+  <form [formGroup]="FormGr" (ngSubmit)="OnSignup()">
+    <div class="w-[60%] ">
+      <button type="button" class="btnlog my-6 font-bold" routerLink="/login">
+        <mat-icon>arrow_circle_left</mat-icon><span>Back to Login</span>
+      </button>
+      <h1 class="text-center text-black">Get Started Now</h1>
+      <h4 class="text-center text-black" >enter your credentials</h4>
+    </div>
+    <div class="sub">
+      <mat-form-field hideRequiredMarker="" appearance="outline" class="w-full">
+        <mat-label>Name</mat-label>
+        <mat-icon matSuffix class="mr-2 text-[#355C7D]">person</mat-icon>
+        <input matInput class="" type="text" placeholder="Enter your name" formControlName="name" />
+      </mat-form-field>
+
+    </div>
+    <div class="sub">
+      <mat-form-field hideRequiredMarker="" appearance="outline" class="w-full">
+        <mat-label>Lastname</mat-label>
+        <mat-icon matSuffix class="mr-2 text-[#355C7D]">person</mat-icon>
+        <input matInput type="text" placeholder="Enter your lastname" formControlName="lastname" />
+      </mat-form-field>
+    </div>
+    <div class="sub">
+      <mat-form-field hideRequiredMarker="" appearance="outline" class="w-full">
+        <mat-label>Email</mat-label>
+        <mat-icon matSuffix class="mr-2 text-[#355C7D]">email</mat-icon>
+        <input matInput formControlName="email" placeholder="Enter your email" />
+      </mat-form-field>
+    </div>
+    <div class="sub">
+       <mat-form-field hideRequiredMarker="" appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+       
+          <mat-icon (click)="Onshow()" matSuffix  class="mr-2 text-[#355C7D]" >   {{hide()? 'visibility_off':'visibility'}} </mat-icon>
+        
+        <input matInput [type]="hide()?'password':'text'" placeholder="Enter your password" formControlName="password" />
+      </mat-form-field>
+      
+    </div>
+    <div class="sub">
+       <mat-form-field hideRequiredMarker="" appearance="outline" class="w-full">
+        <mat-label>Password</mat-label>
+       
+          <mat-icon (click)="Onshow()" matSuffix  class="mr-2 text-[#355C7D]" >   {{hide()? 'visibility_off':'visibility'}} </mat-icon>
+        
+        <input matInput [type]="hide()?'password':'text'" placeholder="confirm password" formControlName="confirmpassword" />
+      </mat-form-field>
+      
+    </div>
+
+    <button pRipple type="submit"  class="btnlog w-[60%]">
+      <mat-icon>account_circle</mat-icon> create account
+    </button>
+  </form>
+  <div class="simg">
+    <img src="/img.jpg" alt="" />
+  </div>
+</div>
+

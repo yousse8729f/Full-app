@@ -1,0 +1,15 @@
+
+env/
+venv/
+__pycache__/
+
+
+.env
+**/Utils/.env
+**/AgentAI/.env
+
+
+*.json
+**/client_secret.json
+**/token_gmail_v1.json
+**/"token files"/

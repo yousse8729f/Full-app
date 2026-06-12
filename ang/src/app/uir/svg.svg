@@ -1,0 +1,7 @@
+<svg viewBox="0 0 200 200" width="200" height="200" style="border: 1px dashed #ccc;">
+    <!-- <path d="M1,10 V10  100,0" stroke="green" fill="green" />
+    <path d="M1,1 V10 C0,10,30,40,0,   100,0" stroke="green" fill="green" />
+    <path d="M1,1 H10   100,0" stroke="green" fill="green" /> -->
+    <path d=" M 0,100 C 50,0  200,0 0,0  200,100" stroke="green" fill="green" />
+    <circle cx="10" cy="100" r="10" stroke="green" fill="red" /> 
+</svg>

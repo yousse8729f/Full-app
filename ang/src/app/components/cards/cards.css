@@ -1,0 +1,58 @@
+@reference "tailwindcss";
+.card-container {
+  @apply flex flex-wrap justify-center gap-8 p-10 h-[200px] ;
+}
+
+.modern-card {
+  @apply flex flex-col p-6 rounded-2xl border-none transition-all duration-300 ease-in-out;
+  background: rgb(221, 221, 221);
+  box-shadow: 0 10px 30px -15px rgba(0, 0, 0, 0.1);
+  width: 320px;
+  cursor: pointer;
+
+  &:hover {
+    @apply -translate-y-2;
+    box-shadow: 0 20px 40px -20px rgba(0, 0, 0, 0.15);
+  }
+}
+
+mat-card-header {
+  @apply mb-4 items-center;
+  
+  .icon-wrapper {
+    @apply flex items-center justify-center w-10 h-10 rounded-lg mb-2 mr-3;
+    
+    &.orange { background: #fff1eb; mat-icon { color: #f96a32; } }
+    &.blue { background: #eef2ff; mat-icon { color: #4f46e5; } }
+    &.slate { background: #f1f5f9; mat-icon { color: #475569; } }
+  }
+}
+
+mat-card-title {
+  @apply text-lg font-bold text-slate-800;
+  margin-bottom: 0 !important;
+}
+
+mat-card-content {
+  @apply mb-6;
+  p {
+    @apply text-sm leading-relaxed text-slate-500;
+  }
+}
+
+mat-card-footer {
+  @apply mt-auto pt-4 bg-transparent border-t border-gray-50 px-0;
+}
+
+.badge {
+  @apply text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider transition-transform duration-200;
+  display: inline-block;
+
+  &.orange { background: #fff1eb; color: #f96a32; }
+  &.blue { background: #eef2ff; color: #4f46e5; }
+  &.slate { background: #f1f5f9; color: #475569; }
+
+  &:hover {
+    @apply scale-105;
+  }
+}

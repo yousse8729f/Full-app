@@ -1,0 +1,57 @@
+services:
+  db:
+    image: pgvector/pgvector:pg17
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      
+    container_name: startup-db
+
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=user
+      - POSTGRES_DB=ai_talk
+    ports:
+      - "5432:5432" 
+    volumes: 
+      - pgdata:/var/lib/postgresql/data
+  ai_service:
+    build: ./PROJPYTHON
+    container_name: fastapi-agent
+    ports:
+      - "8001:8001"
+    environment:
+        - POSTGRES_USER=postgres
+        - POSTGRES_PASSWORD=user
+        - POSTGRES_HOST=db        # ← key difference
+        - POSTGRES_PORT=5432
+        - POSTGRES_DB=ai_talk
+    depends_on:
+        db:
+          condition: service_healthy
+  backend:
+    build: ./aichat
+    container_name: spring-backend
+    ports:
+     - "8090:8090"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/ai_talk
+      - AI_SERVICE_URL=http://ai_service:8001
+    depends_on:
+        db:
+          condition: service_healthy
+        ai_service:
+          condition: service_started   
+  frontend:
+    build: ./ang
+    container_name: "angular_ui"
+    ports:
+     - "80:80"
+    depends_on:
+     - backend
+volumes:
+  pgdata:
+
+

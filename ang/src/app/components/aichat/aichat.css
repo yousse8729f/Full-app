@@ -1,0 +1,51 @@
+.human{
+    margin-left: auto;
+    margin-right: 50px;
+    margin-top: 5px;
+    padding: 15px;
+   background-color: rgb(20, 23, 35);
+    border-radius:30px ;
+    height: fit-content;
+    width: fit-content;
+    max-width: 400px;
+     color: rgba(255, 255, 255, 0.763);
+}
+.ai{
+   
+    margin-left: 60px;
+    margin-right: auto;
+    margin-top: 10px; 
+    padding: 10px;
+    background-color: #191d30;
+    height: max-content;
+    width:fit-content ;
+    max-width: 900px;
+    color: rgba(255, 255, 255, 0.763);
+}
+img{
+    max-width: 20px;
+    width: fit-content;
+    background-color: #191d30;
+}
+input{
+    background-color: rgb(20, 23, 35);
+    
+    border-radius: 20px ;
+    
+   
+}
+.input_holder{
+    position:sticky;
+    bottom: 10px;
+    z-index: 1;
+    border-radius:20px ;
+}
+input::placeholder{
+    color: rgb(106, 110, 129);
+   
+}
+
+
+ 
+
+

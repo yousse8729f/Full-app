@@ -1,0 +1,38 @@
+# LangChain
+langchain
+langchain-groq
+langchain-ollama
+langchain-postgres
+langchain-tavily
+
+# LangGraph
+langgraph
+langgraph-checkpoint-postgres
+
+# LLM Providers
+groq
+ollama
+
+# FastAPI
+fastapi[standard]
+uvicorn[standard]
+
+# Database
+sqlalchemy
+psycopg[binary,pool]
+databases[postgresql]
+alembic
+
+# Redis
+redis
+redis[asyncio]
+
+# GraphQL
+strawberry-graphql[fastapi]
+
+# LangSmith (auto-installed with langchain but good to pin)
+langsmith
+pydantic
+pydantic-settings    # ← for .env / settings management
+pydantic-extra-types
+langchain_community

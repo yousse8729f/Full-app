@@ -1,0 +1,40 @@
+<p-toast></p-toast>
+
+<div class="verify-wrapper">
+  <div class="verify-card">
+    <div class="icon-circle">
+      <mat-icon>verified_user</mat-icon>
+    </div>
+    
+    <div class="text-center space-y-2">
+      <h1>Verify your Email</h1>
+      <p>We've sent a 4-digit code to your inbox. <br> Please enter it below to continue.</p>
+    </div>
+
+    <div class="code-input-container">
+      <input
+        #code
+        type="text"
+        maxlength="4"
+        placeholder="0 0 0 0"
+        class="otp-input"
+        (keypress)="onlyNumbers($event)"
+      />
+    </div>
+
+    <div class="action-stack">
+      <button class="btn-primary" (click)="Verif_email(code.value)">
+        Verify Account
+      </button>
+      
+      <button class="btn-ghost" routerLink="/home">
+        <mat-icon>west</mat-icon>
+        Back to Home
+      </button>
+    </div>
+
+    <p class="resend-text">
+      Didn't receive the code? <span class="resend-link">Resend</span>
+    </p>
+  </div>
+</div>

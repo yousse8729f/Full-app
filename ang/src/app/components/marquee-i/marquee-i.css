@@ -1,0 +1,59 @@
+@import 'tailwindcss';
+
+.marquee-container {
+  @apply w-full overflow-hidden py-8 bg-slate-50/50;
+  /* The Secret Sauce: Fading Edges */
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 15%,
+    black 85%,
+    transparent
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent,
+    black 15%,
+    black 85%,
+    transparent
+  );
+}
+
+.marquee-content {
+  @apply flex w-fit;
+  animation: scroll 30s linear infinite;
+  will-change: transform;
+
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+.logo-group {
+  @apply flex items-center gap-16 px-8;
+}
+
+.logo-item {
+  @apply flex items-center gap-3 grayscale opacity-60 transition-all duration-300;
+  
+  img {
+    @apply h-8 w-auto object-contain;
+  }
+
+  span {
+    @apply text-slate-800 font-bold text-lg tracking-widest;
+  }
+
+  &:hover {
+    @apply grayscale-0 opacity-100 scale-110;
+  }
+}
+
+@keyframes scroll {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}

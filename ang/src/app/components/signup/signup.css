@@ -1,0 +1,86 @@
+@import 'tailwindcss';
+@layer base {
+ 
+  h1 {
+    @apply self-center relative bottom-2  text-2xl tracking-wide;
+  }
+  form {
+    @apply w-[50%] h-full p-4  flex flex-col justify-center gap-5 bg-[#F9F9FB] items-center rounded-l-2xl backdrop-blur-[12px];
+  }
+  label {
+    @apply  text-[#000] text-[18px] capitalize;
+  }
+
+  img {
+    @apply w-full h-full rounded-r-xl;
+  }
+  
+}
+@layer components {
+  .sub {
+    @apply flex flex-col w-[60%] justify-center;
+  }
+  .container {
+    @apply border w-full h-screen  flex justify-center items-center bg-white;
+  }
+  .simg {
+    @apply w-[50%] h-full;
+  }
+  .btnlog {
+    @apply !font-bold  my-2 flex gap-1 justify-center items-center transition-transform   p-2 rounded-2xl  bg-[#F8B195] hover:bg-[#f79c78] hover:-translate-y-2;
+  }
+}
+/* input[matInput] {
+    border: none !important;
+    background: transparent !important;
+    padding: 0 !important;
+    box-shadow: none !important;
+    border-radius:20px  !important ;
+  } */
+
+/* ::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch{
+      background-color: red;
+      
+      } */
+
+      ::ng-deep .mat-mdc-input-element {
+  color: #000 !important;
+  border: 1px solid black;
+}
+
+::ng-deep .mat-mdc-floating-label {
+  color: #555 !important;
+}
+::ng-deep .mat-mdc-form-field-infix {
+  padding-left: 10px !important; /* Gives text breathing room from the curve */
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading {
+  @apply rounded-l-2xl;
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing {
+  @apply rounded-r-xl;
+}
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__notch,
+::ng-deep .mat-mdc-form-field .mdc-notched-outline__trailing {
+  border-color: #aaa !important;
+  border-width: 1px !important;
+}
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__trailing,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__leading,
+::ng-deep .mat-mdc-form-field.mat-focused .mdc-notched-outline__notch
+
+{
+  border-color:#F8B195 !important ;
+  border-width: 1px !important;
+
+
+}
+::ng-deep .mat-mdc-form-field.mat-focused .mat-mdc-floating-label,
+::ng-deep .mat-mdc-form-field.mat-focused .mat-icon{
+    color: #F8B195 !important  ;
+
+}
+
+
+

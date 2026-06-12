@@ -1,0 +1,61 @@
+<div class="main-layout-wrapper">
+  <header class="navbar-container">
+    <div class="logo">
+      <span class="prag">RAG</span>
+      <span class="pagent">Agent</span>
+    </div>
+
+    <app-navbar />
+
+    <div class="auth-section">
+      @if (User) {
+        <div class="user-profile">
+          <span class="email-text">{{User.email}}</span>
+          <button class="btn-log" (click)="LogOUTUser()">Log out</button>
+        </div>
+      } @else {
+        <div class="flex gap-4">
+          <button class="btn-secondary" routerLink="/signup">Signup</button>
+          <button class="btn-log" routerLink="/login">Login</button>
+        </div>
+      }
+    </div>
+  </header>
+
+  <section class="hero-section">
+    <div class="hero-content">
+      <h1 class="hero-title">
+        Your <span class="gradient-text">AI</span> CHAT Assistant <br>
+        <span class="text-slate-400">awaits</span> For You
+      </h1>
+      
+      <div class="hero-actions">
+        <button class="btn-log lg-btn" routerLink="/signup">Get started</button>
+        <button class="btn-dark lg-btn" routerLink="/login">Try for free</button>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-item">
+          <span class="stat-num">{{ cmptask() }}k+</span>
+          <p class="stat-label">Tasks completed daily</p>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">{{ usedapp() }}M</span>
+          <p class="stat-label">Active users</p>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">{{ rate() / 10 }}</span>
+          <p class="stat-label">User rating</p>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-image-container">
+      <img class="img-back" src="/img4.jpg" alt="AI Dashboard" />
+      <img class="img-front" src="/img3.jpg" alt="Chat Interface" />
+    </div>
+  </section>
+
+  <app-marquee-i class="block mt-20" />
+  <app-cards class="block mt-32"></app-cards>
+</div>

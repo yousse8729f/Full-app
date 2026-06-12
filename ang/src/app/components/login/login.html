@@ -1,0 +1,63 @@
+<p-toast></p-toast>
+
+<div class="login-container">
+  <div class="form-side">
+    <div class="nav-header">
+      <button type="button" class="nav-btn" routerLink="/home">
+        <mat-icon>arrow_back</mat-icon>
+        <span>Home</span>
+      </button>
+      <button type="button" class="nav-btn" routerLink="/signup">
+        <span>Create Account</span>
+        <mat-icon>arrow_forward</mat-icon>
+      </button>
+    </div>
+
+    <div class="form-wrapper">
+      <div class="header-text">
+        <h1>Welcome Back</h1>
+        <p>Please enter your credentials to access your account</p>
+      </div>
+
+      <form [formGroup]="FormGr" (ngSubmit)="OnSumbit()" class="login-form">
+        <div class="input-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Email Address</mat-label>
+            <input matInput formControlName="email" placeholder="name@company.com" />
+            <mat-icon matSuffix>mail_outline</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="input-group">
+          <mat-form-field appearance="outline" class="full-width">
+            <mat-label>Password</mat-label>
+            <input
+              matInput
+              [type]="hide() ? 'password' : 'text'"
+              formControlName="password"
+              placeholder="••••••••"
+            />
+            <mat-icon matSuffix (click)="Onshow()" class="cursor-pointer">
+              {{ hide() ? 'visibility_off' : 'visibility' }}
+            </mat-icon>
+          </mat-form-field>
+        </div>
+
+       
+
+        <button type="submit" class="submit-btn" [disabled]="!FormGr.valid">
+          <mat-icon>login</mat-icon>
+          <span>Sign In</span>
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <div class="image-side">
+    <div class="overlay-content">
+      <h2>Experience the power of RAG Agents.</h2>
+      <p>Seamlessly integrate your data with intelligent AI responses.</p>
+    </div>
+    <img src="/img.jpg" alt="Login Visual" />
+  </div>
+</div>

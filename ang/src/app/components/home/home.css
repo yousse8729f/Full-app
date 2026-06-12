@@ -1,0 +1,81 @@
+@import 'tailwindcss';
+
+.main-wrapper {
+  @apply min-h-screen bg-white overflow-x-hidden;
+}
+
+.navbar-container {
+  @apply flex justify-between items-center px-12 py-6 w-full max-w-7xl mx-auto;
+}
+
+.logo {
+  @apply flex flex-col leading-tight;
+  .prag { @apply text-[#355C7D] font-black text-3xl tracking-tighter; }
+  .pagent { @apply text-[#F8B195] font-semibold text-sm uppercase tracking-widest; }
+}
+
+.auth-section {
+  @apply flex items-center gap-4;
+  .email-text { @apply font-medium text-slate-600 mr-2; }
+}
+
+/* --- Hero Layout --- */
+.hero-section {
+  @apply flex flex-col lg:flex-row items-center justify-between px-12 py-16 max-w-7xl mx-auto gap-16;
+}
+
+.hero-content {
+  @apply flex-1 space-y-8;
+}
+
+.hero-title {
+  @apply text-6xl font-extrabold text-[#355C7D] leading-[1.1] tracking-tight;
+  .gradient-text {
+    @apply text-transparent bg-clip-text bg-gradient-to-r from-[#F8B195] to-[#f67280];
+  }
+}
+
+.hero-actions {
+  @apply flex gap-6 items-center;
+}
+
+/* --- Buttons --- */
+.btn-log, .btn-dark, .btn-secondary {
+  @apply px-8 py-4 rounded-2xl font-bold transition-all duration-300 cursor-pointer hover:-translate-y-1;
+}
+
+.btn-log { @apply bg-[#F8B195] text-white hover:bg-[#f79c78] shadow-orange-200/50; }
+.btn-dark { @apply bg-[#355C7D] text-white hover:bg-[#2a4a65] shadow-blue-200/50; }
+.btn-secondary { @apply bg-slate-100 text-slate-700 hover:bg-slate-200 shadow-none; }
+
+/* --- Stats Section --- */
+.stats-grid {
+  @apply flex gap-10 pt-10 border-t border-slate-100;
+  .stat-item {
+    @apply flex flex-col;
+    .stat-num { @apply text-2xl font-black text-[#355C7D]; }
+    .stat-label { @apply text-xs uppercase font-bold text-slate-400 tracking-wider; }
+  }
+}
+
+/* --- Modern Image Stack --- */
+.hero-image-container {
+  @apply relative flex-1 w-full max-w-xl h-[250px];
+  
+  img {
+    @apply rounded-3xl shadow-2xl transition-transform duration-500 border-4 border-white;
+  }
+  
+  .img-back {
+    @apply absolute top-0 right-0 w-[80%] z-10;
+  }
+  
+  .img-front {
+    @apply absolute bottom-0 left-0 w-[70%] z-20 translate-y-8 -translate-x-4;
+  }
+
+  &:hover {
+    .img-back { transform: translate(10px, -10px) rotate(2deg); }
+    .img-front { transform: translate(-10px, 10px) rotate(-2deg); }
+  }
+}

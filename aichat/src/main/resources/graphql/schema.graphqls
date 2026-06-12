@@ -1,0 +1,19 @@
+type Query{
+    ConvById(conv_id:ID!):Conv
+    allConvsByUserId(user_id: Int!): [Conv]
+}
+type Mutation{
+    createconv(name:String!,user_id:ID): Conv
+    deleteconv(conv_id:ID!):Boolean
+}
+type Conv{
+    convId:ID
+    name:String
+    userId:Int
+    messages:[Messages]
+}
+type Messages{
+    idMes: ID
+    message:String
+    role:String
+}

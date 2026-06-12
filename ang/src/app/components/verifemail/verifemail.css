@@ -1,0 +1,49 @@
+@import 'tailwindcss';
+
+.verify-wrapper {
+  @apply w-full h-screen bg-slate-50 flex justify-center items-center p-4;
+  background-image: radial-gradient(circle at 20% 20%, rgba(248, 177, 149, 0.05) 0%, transparent 50%),
+                    radial-gradient(circle at 80% 80%, rgba(53, 92, 125, 0.05) 0%, transparent 50%);
+}
+
+.verify-card {
+  @apply bg-white/80 backdrop-blur-xl w-full max-w-md p-10 flex flex-col items-center gap-8 
+         rounded-[32px] border border-white shadow-2xl shadow-slate-200/60;
+}
+
+.icon-circle {
+  @apply w-16 h-16 bg-[#fff1eb] rounded-2xl flex items-center justify-center mb-2;
+  mat-icon { @apply text-[#F8B195] text-3xl w-auto h-auto; }
+}
+
+h1 { @apply text-2xl font-black text-[#355C7D] tracking-tight; }
+p { @apply text-sm text-slate-400 font-medium leading-relaxed; }
+
+.otp-input {
+  @apply w-full text-center text-4xl font-black tracking-[1.5rem] p-4 
+         bg-slate-50 border-2 border-slate-100 rounded-2xl outline-none 
+         transition-all duration-300 focus:border-[#F8B195] focus:bg-white;
+  color: #355C7D;
+  &::placeholder { @apply opacity-20 tracking-[1.5rem]; }
+}
+
+.action-stack {
+  @apply w-full flex flex-col gap-3;
+}
+
+.btn-primary {
+  @apply w-full bg-[#F8B195] text-white font-bold py-4 rounded-2xl 
+         transition-all duration-300 hover:bg-[#f79c78] hover:-translate-y-1 
+         shadow-lg shadow-orange-200;
+}
+
+.btn-ghost {
+  @apply w-full flex items-center justify-center gap-2 text-slate-400 font-bold py-2 
+         transition-all hover:text-[#355C7D];
+  mat-icon { font-size: 18px; width: 18px; height: 18px; }
+}
+
+.resend-text {
+  @apply text-xs text-slate-400;
+  .resend-link { @apply text-[#355C7D] font-bold cursor-pointer hover:underline; }
+}
