@@ -13,9 +13,9 @@ from typing import List
 from pathlib import Path
 from dotenv import load_dotenv
 from os import getenv
-import os
 from langchain_core.documents import Document
 from AI.AgentAI.Utils.ModelConfig import Model
+
 
 load_dotenv()
 
@@ -82,7 +82,9 @@ class DocumentService:
         return docs
 
     async def rag_tool(self, file: List):
-        await self.initVectorStore()
+        DocumentService.vector_store= await self.initVectorStore()
+
+
 
         file_path = self.handle_file(file)
         files_to_load = []
@@ -106,8 +108,9 @@ class DocumentService:
         if not files_to_load:
             return
         loaded_doc = await self.load_file(files_to_load)
-        split = RecursiveCharacterTextSplitter(chunk_size=400, chunk_overlap=50)
+        split = RecursiveCharacterTextSplitter(chunk_size=600, chunk_overlap=512*0.15,separators=["\n\n","\n"," ",""])
         chunks = split.split_documents(documents=loaded_doc)
         if chunks:
             await DocumentService.vector_store.aadd_documents(chunks)
             logger.info("file added to database")
+        return chunks

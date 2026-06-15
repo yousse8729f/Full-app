@@ -2,6 +2,8 @@ import asyncio
 import sys
 import urllib
 
+from langchain_postgres.v2.hybrid_search_config import HybridSearchConfig
+
 if sys.platform=="win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 
@@ -20,6 +22,7 @@ from psycopg.errors import DuplicateTable,DuplicateObject
 from pathlib import Path
 
 from AI.AgentAI.Utils.ModelConfig import Model
+HybridSearchConfig
 
 current = Path(__file__).parent
 env_path = current/".env"
@@ -87,6 +90,7 @@ async def get_connection_engine():
                     Column("conversation_id","INTEGER"),
                     Column("creationdate","TEXT")
                 ],
+
 
 
             )

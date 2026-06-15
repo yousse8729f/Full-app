@@ -159,7 +159,6 @@ class EmailAgent:
     async def answer(self,query,task):
         com = await self.compile()
         res = await com.ainvoke(input={"messages":[HumanMessage(content=query)],"task":task},config=self.runtime_config)
-        print(res["messages"][-1])
         return res["messages"][-1]
 
 
@@ -184,7 +183,7 @@ class EmailAgent:
 
 
 emailAgent =EmailAgent()
-asyncio.run(emailAgent.answer("send a brand new  email to assilifarah685@gmail.com tell him that `this is angent sending you message to remind you that tommorow is the tandem formation` fix the sentence and send it .","the user need to send the message to assilifarah685@gmail.com "))
+# asyncio.run(emailAgent.answer("send a brand new  email to assilifarah685@gmail.com tell him that `this is angent sending you message to remind you that tommorow is the tandem formation` fix the sentence and send it .","the user need to send the message to assilifarah685@gmail.com "))
 # asyncio.run(emailAgent.answer("look for our latest conversation for email: youssefmasmoudi05@gmail.com and reply to him. that i see about that  ","the user need to reply  to youssefmasmoudi05@gmail.com to his latest conversation "))
 # asyncio.run(emailAgent.answer("look for our latest conversation for email: youssefmasmoudi05@gmail.com and give the whole conversation  ","the user need to see the latest conversation with youssefmasmoudi05@gmail.com"))
 # asyncio.run(emailAgent.answer("look for our second latest conversation for email: youssefmasmoudi05@gmail.com and give the whole conversation  ","the user need to see the second latest conversation with youssefmasmoudi05@gmail.com"))

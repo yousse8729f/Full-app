@@ -2,11 +2,13 @@ import asyncio
 import sys
 
 from langchain_core.runnables import RunnableConfig
+from langgraph.graph.state import CompiledStateGraph
 from langgraph.runtime import Runtime
 from pydantic import Field
 from pydantic import BaseModel
 from pydantic.v1.typing import convert_generics
-
+from torch.utils.bundled_inputs import augment_many_model_functions_with_bundled_inputs
+from langchain.messages import RemoveMessage
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 from typing import TypedDict, Annotated
@@ -56,6 +58,7 @@ class MemoryAI:
 
     class MessageState(MS):
         task:str
+        summary:str
     class Context(BaseModel):
         user_id: str
         conv_id:str
@@ -111,6 +114,34 @@ class MemoryAI:
             }
 
         return {"messages": [AIMessage(content="I couldn't find anything specific to save.")]}
+    async def summarize(self):
+        MAX=30
+        KEEP=6
+        config = await self.configuration()
+        graph = await self.compilegraph()
+        memo =  await graph.aget_state(config)
+
+        messages = memo.values.get("messages",[])
+        if len(messages)>MAX:
+            keep_msg=messages[-KEEP:]
+            summary_msg = messages[:-KEEP]
+            summary_message = (
+                f"This is a summary of the conversation to date: {summary_msg}\n\n"
+                "Extend the summary by taking into account the new messages above:"
+            )
+            sys_msg = SystemMessage(content=summary_message)
+            res =await self.model.ainvoke([sys_msg])
+            [RemoveMessage(id = m.id) for m in summary_msg]
+
+
+
+        return
+
+
+        print(memo)
+
+
+
 
     async def callToolsaveUser(self, state: MessageState):
         sys_msg = SystemMessage(content=(
@@ -175,6 +206,7 @@ class MemoryAI:
     async def return_answer(self,query:str,task:str):
         config = await self.configuration()
         human = HumanMessage(content=query)
+
         memoAI = await  self.compilegraph()
         input_ = {"messages": [human],"task":task}
         res= await memoAI.ainvoke(
@@ -187,13 +219,12 @@ class MemoryAI:
 
 
         return res
-# async def main():
-#     x= MemoryAI(1,1)
-#
-#
-#     await x.return_answer("i like start wars"
-#                           ,"summarize")
-# asyncio.run(main())
+async def main():
+    x= MemoryAI(0,0)
+
+
+    await x.summarize()
+asyncio.run(main())
 
 
 

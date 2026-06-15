@@ -1,7 +1,7 @@
 
 from langchain_core.messages import SystemMessage, AIMessage, HumanMessage
 from langchain_tavily import TavilySearch
-from AI.AgentAI.Utils.AllClass import AllUrlResult,MessageState
+from AI.AgentAI.Utils.AllClass import AllUrlResult,MessageState as ms
 from AI.AgentAI.Utils.ModelConfig import Model
 from AI.AgentAI.Utils.prompt import webPrompt
 from langgraph.graph import START,END,StateGraph
@@ -18,14 +18,18 @@ class WebAgent:
     _graph=None
     def __init__(self):
         self.llm=Model(temp=0.2).model_Grog()
+    class MessageState(ms):
+        task:str
     async  def Search_Tavily(self,state:MessageState):
         tavily = TavilySearch(
             max_results=3,
             include_answer=True,
         )
+        message = state["messages"][-1].content
         llm_tool=self.llm.bind_tools([tavily])
-        sys_Search=SystemMessage(content=webPrompt)
-        msg=[sys_Search]+state['messages']
+
+        sys_Search=SystemMessage(content=webPrompt.format(task=state["task"],query=message))
+        msg=[sys_Search]
         res = await llm_tool.ainvoke(msg)
 
         return {"messages":[res]}
@@ -42,7 +46,7 @@ class WebAgent:
         return {"messages":[AIMessage(content=content_str)]}
     async def compileweb(self):
         if not WebAgent._graph:
-            graph = StateGraph(MessageState)
+            graph = StateGraph(self.MessageState)
             graph.add_node("Search_Tavily",self.Search_Tavily)
             graph.add_node("final_res",self.final_res)
             graph.add_edge(START,"Search_Tavily")
@@ -50,13 +54,13 @@ class WebAgent:
             graph.add_edge("final_res",END)
             WebAgent._graph=graph.compile()
         return WebAgent._graph
-    async def return_answer(self,questions: list[str]):
+    async def return_answer(self,questions: list[str],task):
         webai = await self.compileweb()
         results = []
 
         for question in questions:
             human = HumanMessage(content=question)
-            res = await webai.ainvoke(input={"messages": [human]})
+            res = await webai.ainvoke(input={"messages": [human],"task":task})
             results.append({
                 "question": question,
                 "result": res["messages"][-1].content
