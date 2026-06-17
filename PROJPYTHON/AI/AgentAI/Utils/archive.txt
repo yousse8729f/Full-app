@@ -1,0 +1,75 @@
+ class Context(BaseModel):
+        user_id: str
+        conv_id:str
+
+
+    async def get_user_info(self,state:MessageState,runtime: ToolRuntime[Context]) :
+        """get user data"""
+
+        store_user = runtime.store
+
+        user_info = await store_user.aget((str(self.conv_id), str(self.user_id)), "memory_data")
+        if user_info and user_info.value:
+
+            return {"messages":[AIMessage(content=str(user_info.value))]}
+        return {"messages":[AIMessage(content="none")]}
+
+
+
+    async def save_user_info(self, state: MessageState, runtime: ToolRuntime[Context]):
+        """saving user info"""
+        store_user = runtime.store
+
+        last_msg = state['messages'][-1]
+
+        if hasattr(last_msg, "tool_calls") and last_msg.tool_calls:
+            user_info = last_msg.tool_calls[0]['args']['user_info']
+
+            namespace = (str(self.conv_id), str(self.user_id))
+            exist_item = await store_user.aget(namespace, "memory_data")
+            exist_data = exist_item.value if exist_item else {}
+
+            for k,v  in user_info.items():
+                if k in exist_data.keys():
+                    if isinstance(v,list):
+                        exist_data[k]=exist_data[k]+v
+                    else:
+                        exist_data[k]=user_info[k]
+                else:
+                     exist_data[k]=user_info[k]
+            update_data = {**exist_data}
+            await store_user.aput(namespace, "memory_data", update_data)
+
+            return {
+                "messages": [
+                    ToolMessage(
+                        tool_call_id=last_msg.tool_calls[0]['id'],
+                        content="Successfully saved user info"
+                    ),
+                    AIMessage(content="Got it! I've updated your preferences.")
+                ]
+            }
+
+        return {"messages": [AIMessage(content="I couldn't find anything specific to save.")]}
+class save_user_info(BaseModel):
+    """Saves user preferences or personal details to the database."""
+
+    user_info:dict=Field(description=  """
+        STRICT FORMAT RULES:
+        - Arrays ONLY for: likes, skills, goals, hobbies, languages
+        - Strings ONLY for: name, age, location, occupation, notes
+        EXEMPLE:
+        CORRECT:
+        {
+            "likes": ["PyTorch"],
+            "skills": ["Python", "Angular"],
+            "name": "Youssef",
+            "notes": "Prefers dark UI"
+        }
+
+        WRONG — never do this:
+        {"likes": "PyTorch"}        ← likes must always be array
+        {"skills": "Python"}        ← skills must always be array
+
+        """
+    )

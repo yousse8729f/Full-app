@@ -3,6 +3,7 @@ import sys
 import urllib
 
 from langchain_postgres.v2.hybrid_search_config import HybridSearchConfig
+from langgraph.checkpoint.serde.base import SerializerProtocol
 
 if sys.platform=="win32":
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -146,7 +147,7 @@ async def get_checkpointer()->AsyncPostgresSaver:
     global checkpoint
     if checkpoint is None:
         _pool = await  get_connection_poo()
-        checkpoint =  AsyncPostgresSaver(conn=_pool,)
+        checkpoint =  AsyncPostgresSaver(conn=_pool)
         await checkpoint.setup()
     return  checkpoint
 async def get_store()->AsyncPostgresStore:

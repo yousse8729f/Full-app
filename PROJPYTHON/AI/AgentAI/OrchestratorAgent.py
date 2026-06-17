@@ -12,8 +12,8 @@ from langchain_core.runnables import RunnableConfig
 
 from langgraph.graph import StateGraph,START,END
 
-# from AI.AgentAI.GithubAgent import GithubAgent
-# from AI.AgentAI.GmailAgent import EmailAgent
+from AI.AgentAI.GithubAgent import GithubAgent
+from AI.AgentAI.GmailAgent import EmailAgent
 from AI.AgentAI.Sql_ImageAI import SqlImageAi
 from AI.AgentAI.Utils.PostgresConfig import get_checkpointer
 from AI.AgentAI.WebAgent import WebAgent
@@ -31,13 +31,9 @@ set_llm_cache(redis_cache)
 class OrchestratorAgent:
    _graph=None
 
-   async def configuration(self):
-      config: RunnableConfig = {
-         "configurable": {
-            "thread_id": f"{self.user_id}_{self.conv_id}"
-         }
-      }
-      return config
+
+
+
    def __init__(self,user_id,conv_id,date,chunks=None):
       self.conv_id=conv_id
       self.user_id=user_id
@@ -46,8 +42,13 @@ class OrchestratorAgent:
       self.RagAgent=RagAgent(user_id,conv_id)
       self.SqlImageAi=SqlImageAi(date)
       self.chunk=chunks
-      # self.GithubAgent=GithubAgent()
-      # self.EmailAgent = EmailAgent()
+      self.config:RunnableConfig= {
+         "configurable": {
+            "thread_id": f"{self.user_id}_{self.conv_id}"
+         }
+      }
+      self.GithubAgent=GithubAgent()
+      self.EmailAgent = EmailAgent()
       self.MemoryAgent=MemoryAI(conv_id,user_id)
       self.EnhanceAgent = EnhanceAi()
       self.webAgent=WebAgent()
@@ -70,6 +71,7 @@ class OrchestratorAgent:
    class MessageState(sm):
       task:str
       user: str
+      ai_reponses:list
       agent_results:list
 
 
@@ -77,9 +79,9 @@ class OrchestratorAgent:
    async def EnhanceAi_Action(self,state:MessageState):
       print("ENHANCEAI")
       res= await self.EnhanceAgent.answer(state['user'])
-      return {"messages":[res["messages"][-1]]}
+      return {"ai_reponses":[res["messages"][-1]]}
    async def plan(self,state:MessageState):
-      lstmsg= json.loads(state["messages"][-1].content)
+      lstmsg= json.loads(state["ai_reponses"][-1].content)
       print("plan",lstmsg)
       argPrompt= self.prompt.format(
          original_query=lstmsg["original_query"],
@@ -89,7 +91,8 @@ class OrchestratorAgent:
          needs_document_search=lstmsg["needs_document_search"],
          complexity=lstmsg["complexity"],
          needs_email=lstmsg["needs_email"],
-         needs_github=lstmsg["needs_github"]
+         needs_github=lstmsg["needs_github"],
+         limit=len(state["messages"])
       )
       sysmsg=SystemMessage(content=argPrompt)
       Allmsg=[sysmsg]+self.clean_messages(state["messages"])
@@ -98,7 +101,7 @@ class OrchestratorAgent:
       res:Orch = await  llm_output.ainvoke(Allmsg)
       Format=  res.model_dump_json()
       print(Format)
-      return {"messages":[AIMessage(content=Format)]}
+      return {"ai_reponses":[AIMessage(content=Format)]}
    async def _run_step(self, step: dict, state: MessageState) -> dict:
       print("runstep")
       """Runs one step — calls the right agent with the right questions."""
@@ -106,19 +109,21 @@ class OrchestratorAgent:
       task = step["task"]
       questions = step["sub_questions_assigned"]
 
+
+
       if agent == "web_agent":
          res = await self.webAgent.return_answer(questions,task)
-      # elif agent=="github_agent":
-      #    res= await self.GithubAgent.answer(questions[0],task)
-      # elif agent=='email_agent':
-      #    res= await self.EmailAgent.answer(questions[0],task)
+      elif agent=="github_agent":
+         res= await self.GithubAgent.answer(questions[0],task)
+      elif agent=='email_agent':
+         res= await self.EmailAgent.answer(questions[0],task)
 
       elif agent == "rag_agent":
          res = await self.RagAgent.answer(questions,self.chunk)
 
       elif agent == "memory_agent":
          res = await self.MemoryAgent.return_answer(questions[0], task)
-         res=[res["messages"][-1].content]
+
       elif agent == "Sql_Image_agent":
          res = await self.SqlImageAi.answer(questions[0])
          if isinstance(res, AIMessage):
@@ -129,19 +134,26 @@ class OrchestratorAgent:
 
       else:
          res = []
-      print(res)
 
-      return {
-         "agent": agent,
-         "results": res
-      }
+
+      return  res
+
    async def execute_plan(self,state:MessageState):
          print("exuteqaiton")
-
-         plan = json.loads(state["messages"][-1].content)
+         summary=''
+         states=''
+         plan = json.loads(state["ai_reponses"][-1].content)
          steps = plan["steps"]
          execution = plan["execution_order"]
          results = []
+         if not"memory_agent" in steps:
+            graph = await self.MemoryAgent.compilegraph()
+            state_snapshot = await graph.aget_state(self.config)
+            print("graph",await graph.aget_state(self.config))
+            summary =  state_snapshot.values.get("summary")
+            states =  state_snapshot.values.get("state")
+            print("summary",summary)
+            print("states",states)
 
          if execution == "parallel":
             async with asyncio.TaskGroup() as tg:
@@ -156,11 +168,13 @@ class OrchestratorAgent:
             for step in steps:
                res = await self._run_step(step, state)
                results.append(res)
+               if summary or states:
+                  results.append({"summary":summary})
+                  results.append({"state":states})
          print("sequentiatl result",results)
 
          return {
             "agent_results": results,
-            "messages": [AIMessage(content=json.dumps(results))]
          }
    async def RefineAi_Action(self,state:MessageState):
 
@@ -192,11 +206,12 @@ class OrchestratorAgent:
 
    async def answer(self,q:str):
       human_input = q.lower().strip()
-      conf = await self.configuration()
+
 
       mainagent= await self.Compile()
       input_={"messages":[HumanMessage(content=human_input)],"user":human_input,"task":'',"agent_results":[]}
-      res=await mainagent.ainvoke(input =input_, config=conf)
+      res=await mainagent.ainvoke(input =input_, config=self.config)
+      print(res)
       return res
       # async for chunk in  mainagent.astream_events(input =input_,version="v2", config=conf):
       #    if chunk:
@@ -225,13 +240,13 @@ class OrchestratorAgent:
 
 
 
-#
-# async def main():
-#    x = OrchestratorAgent(0, 0, datetime.now())
-#    return await x.answer("hello")
-#
-#
-# asyncio.run(main())
+
+async def main():
+   x = OrchestratorAgent(0, 0, datetime.now())
+   return await x.answer("tell me what we talk about in this entire conversation")
+
+
+asyncio.run(main())
 
 
 

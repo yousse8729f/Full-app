@@ -33,7 +33,7 @@ class Model:
 
     def model_llama_Grog(self):
         model = ChatOllama(
-                    model="qwen3-next:80b-cloud",
+                    model="gemma4:31b-cloud",
                     base_url="https://ollama.com",
                     client_kwargs={
                         "headers": {
