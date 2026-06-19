@@ -109,14 +109,15 @@ constructor() {
     }
   });
 }
-  
+  private msgai=''
   
   ngOnInit(): void {
 
     
-    let msgai = '';
+
     this.websocketService.messages$.pipe(takeUntilDestroyed(this.destroy)).subscribe({
       next: (value) => {
+      
         const type = value.type;
         const text = value.text;
 
@@ -128,9 +129,9 @@ constructor() {
           if (type === 'tool') {
             last.message = text;
           } else if (type === 'message') {
-            console.log(msgai);
-            msgai += text;
-            last.message = msgai;
+            console.log(this.msgai);
+            this.msgai += text;
+            last.message = this.msgai;
           }
 
           messages[messages.length - 1] = last;
@@ -259,6 +260,7 @@ constructor() {
     if (!this.newMessage) return;
 
     const msg = { text: this.newMessage };
+    this.msgai=""
     this.websocketService.sendMessage(msg);
 
     this.localMessages.update((prev) => [

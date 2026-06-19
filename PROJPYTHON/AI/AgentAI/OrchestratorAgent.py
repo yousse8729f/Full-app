@@ -210,30 +210,31 @@ class OrchestratorAgent:
 
       mainagent= await self.Compile()
       input_={"messages":[HumanMessage(content=human_input)],"user":human_input,"task":'',"agent_results":[]}
-      res=await mainagent.ainvoke(input =input_, config=self.config)
-      print(res)
-      return res
-      # async for chunk in  mainagent.astream_events(input =input_,version="v2", config=conf):
-      #    if chunk:
-      #       events=chunk.get("event")
-      #       node = chunk.get("metadata",{}).get('langgraph_node','')
-      #       if node=='plan':
-      #          yield {'type':'tool','text':'thinking'}
-      #       if node=='Search_Tavily':
-      #          yield {'type':'tool','text':'searching web'}
-      #       if node=='save_user_info':
-      #          yield {'type':'tool','text':'save info'}
-      #       if node=='save_user_info':
-      #          yield {'type':'tool','text':'save info'}
-      #       if node=='get_user_info':
-      #          yield {'type':'tool','text':'get info'}
-      #       if events=='on_retriever_start':
-      #          yield {'type':'tool','text':'retrieve document'}
-      #
-      #       if events=="on_chat_model_stream" and node=='RefineAi_Action':
-      #          content = chunk.get("data").get('chunk').content
-      #          if content:
-      #             yield {'type':'message','text':content}
+      # res=await mainagent.ainvoke(input =input_, config=self.config)
+      # print(res["messages"][-1])
+      # return res["messages"][-1]
+      async for chunk in  mainagent.astream_events(input =input_,version="v2", config=self.config):
+         if chunk:
+            print(chunk)
+            events=chunk.get("event")
+            node = chunk.get("metadata",{}).get('langgraph_node','')
+            if node=='plan':
+               yield {'type':'tool','text':'thinking'}
+            if node=='Search_Tavily':
+               yield {'type':'tool','text':'searching web'}
+            if node=='save_user_info':
+               yield {'type':'tool','text':'save info'}
+            if node=='save_user_info':
+               yield {'type':'tool','text':'save info'}
+            if node=='get_user_info':
+               yield {'type':'tool','text':'get info'}
+            if events=='on_retriever_start':
+               yield {'type':'tool','text':'retrieve document'}
+
+            if events=="on_chat_model_stream" and node=='RefineAi_Action':
+               content = chunk.get("data").get('chunk').content
+               if content:
+                  yield {'type':'message','text':content}
 
 
 
@@ -241,12 +242,12 @@ class OrchestratorAgent:
 
 
 
-async def main():
-   x = OrchestratorAgent(0, 0, datetime.now())
-   return await x.answer("tell me what we talk about in this entire conversation")
-
-
-asyncio.run(main())
+# async def main():
+#    x = OrchestratorAgent(1, 1, datetime.now())
+#    return await x.answer("so do you know gemma 4 is it good llm")
+#
+#
+# asyncio.run(main())
 
 
 

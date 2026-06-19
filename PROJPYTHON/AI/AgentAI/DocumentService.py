@@ -114,3 +114,7 @@ class DocumentService:
             await DocumentService.vector_store.aadd_documents(chunks)
             logger.info("file added to database")
         return chunks
+# x=DocumentService(1,1)
+# async def main():
+#    await x.rag_tool(["C:/Users/Youssef/Downloads/langgraph.pdf"])
+# asyncio.run(main())

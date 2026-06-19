@@ -1,11 +1,15 @@
+import asyncio
 import datetime
+import sys
 import traceback
+if sys.platform == 'win32':
+    asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
 import typing
 from typing import Optional
 
 import sqlalchemy
 from uuid import UUID
-from strawberry import type,field,mutation
+# from strawberry import type,field,mutation
 from tempfile import NamedTemporaryFile
 from pathlib import Path
 
@@ -48,24 +52,6 @@ async def Upload(user_id:int,conv_id:int,files:list[UploadFile]=File(...)):
     await docservice.rag_tool(filetemp)
     return {"status": "ok", "message": f"Uploaded {len(files)} files"}
 
-@AI_controller.websocket("/ws/journal")
-async def AI_endpoint(
-                      websocket:WebSocket,
-                      manager:webSocketManager=Depends(getmanager)):
-    await manager.connect(websocket)
-    service=OrchestratorAgent(0,0,date)
-    try:
-
-            async for chunk in  service.answer("give me the best 3 post in the last 7 day "):
-                await manager.send_message(websocket,chunk)
-
-    except WebSocketDisconnect:
-        await manager.disconnect(websocket)
-    except WebSocketException:
-        await manager.disconnect(websocket)
-    except Exception:
-        traceback.print_exc()
-        await manager.disconnect(websocket)
 
 
 
@@ -101,89 +87,89 @@ async def AI_endpoint(user_id:int,conv_id:int,
         await manager.disconnect(websocket)
 
 
-@type
-class Message:
-    idMes: int
-    message: str
-    role: str
-@type
-class Conv:
-    convId:int
-    name:str
-    userId:UUID
-    messages: typing.List[Message]
-@type
-class Query:
-     @field(name="allConvsByUserId")
-     async def allConvsByUserId(self,user_id:str)->typing.List[Conv]:
-         user_id = UUID(user_id)
-         join = conversation_table.join(
-             message_table,
-             conversation_table.c.conv_id == message_table.c.conversation_id,
-             isouter=True  # THIS IS THE FIX
-         )
-
-         query = sqlalchemy.select(
-             conversation_table.c.conv_id,
-             conversation_table.c.name,
-             conversation_table.c.user_id,
-             message_table.c.id_mes,
-             message_table.c.message,
-             message_table.c.role
-         ).select_from(join).where(
-             conversation_table.c.user_id == user_id
-         )
-         rows=await database.fetch_all(query)
-         convs={}
-         for row in rows:
-             conv_id= row["conv_id"]
-             if conv_id not in convs:
-                 convs[conv_id] = {
-                     "convId": conv_id,
-                     "name": row["name"],
-                     "userId": str(row["user_id"]),
-                     "messages": []
-                 }
-             if row["id_mes"]:
-                 convs[conv_id]["messages"].append(
-                     Message(
-                         idMes=row["id_mes"],
-                         message=row["message"],
-                         role=row["role"]
-                     )
-                 )
-         return [
-                 Conv(
-                     convId=c["convId"],
-                     name=c["name"],
-                     userId=c["userId"],
-                     messages=c["messages"]
-                 )
-                 for c in convs.values()
-             ]
-@type
-class Mutation:
-    @mutation
-    async def createconv(self,user_id:str,name:str="nouveau conversation")->Conv:
-        user_id = UUID(user_id)
-        query = conversation_table.insert().values(created_at=date.strftime("%Y-%m-%d"),name=name,user_id=user_id)
-        conv_id=        await database.execute(query)
-        return Conv(
-            convId=conv_id,
-            name=name,
-            userId=user_id,
-            messages=[]
-        )
-
-    @mutation
-    async def deleteconv(self, conv_id: int) -> bool:
-        query = conversation_table.delete().where(
-            conversation_table.c.conv_id == conv_id
-        )
-        await database.execute(query)
-        return True
-
-
+# @type
+# class Message:
+#     idMes: int
+#     message: str
+#     role: str
+# @type
+# class Conv:
+#     convId:int
+#     name:str
+#     userId:UUID
+#     messages: typing.List[Message]
+# @type
+# class Query:
+#      @field(name="allConvsByUserId")
+#      async def allConvsByUserId(self,user_id:str)->typing.List[Conv]:
+#          user_id = UUID(user_id)
+#          join = conversation_table.join(
+#              message_table,
+#              conversation_table.c.conv_id == message_table.c.conversation_id,
+#              isouter=True  # THIS IS THE FIX
+#          )
+#
+#          query = sqlalchemy.select(
+#              conversation_table.c.conv_id,
+#              conversation_table.c.name,
+#              conversation_table.c.user_id,
+#              message_table.c.id_mes,
+#              message_table.c.message,
+#              message_table.c.role
+#          ).select_from(join).where(
+#              conversation_table.c.user_id == user_id
+#          )
+#          rows=await database.fetch_all(query)
+#          convs={}
+#          for row in rows:
+#              conv_id= row["conv_id"]
+#              if conv_id not in convs:
+#                  convs[conv_id] = {
+#                      "convId": conv_id,
+#                      "name": row["name"],
+#                      "userId": str(row["user_id"]),
+#                      "messages": []
+#                  }
+#              if row["id_mes"]:
+#                  convs[conv_id]["messages"].append(
+#                      Message(
+#                          idMes=row["id_mes"],
+#                          message=row["message"],
+#                          role=row["role"]
+#                      )
+#                  )
+#          return [
+#                  Conv(
+#                      convId=c["convId"],
+#                      name=c["name"],
+#                      userId=c["userId"],
+#                      messages=c["messages"]
+#                  )
+#                  for c in convs.values()
+#              ]
+# @type
+# class Mutation:
+#     @mutation
+#     async def createconv(self,user_id:str,name:str="nouveau conversation")->Conv:
+#         user_id = UUID(user_id)
+#         query = conversation_table.insert().values(created_at=date.strftime("%Y-%m-%d"),name=name,user_id=user_id)
+#         conv_id=        await database.execute(query)
+#         return Conv(
+#             convId=conv_id,
+#             name=name,
+#             userId=user_id,
+#             messages=[]
+#         )
+#
+#     @mutation
+#     async def deleteconv(self, conv_id: int) -> bool:
+#         query = conversation_table.delete().where(
+#             conversation_table.c.conv_id == conv_id
+#         )
+#         await database.execute(query)
+#         return True
+#
+#
 
 
 

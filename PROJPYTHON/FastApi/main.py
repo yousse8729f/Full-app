@@ -12,7 +12,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from contextlib import asynccontextmanager
 
 from FastApi.DataBaseConfig.models import init_db,database
-from FastApi.Controller.AI_controller import AI_controller, Query, Mutation
+from FastApi.Controller.AI_controller import AI_controller
 from FastApi.Services.webSocketService import webSocketManager
 
 origin = [
@@ -25,8 +25,8 @@ async def lifespan(app:FastAPI):
     print("db start")
     yield
     await database.disconnect()
-schema= strawberry.Schema(query=Query,mutation=Mutation)
-graphql_R=GraphQLRouter(schema)
+# schema= strawberry.Schema(query=Query,mutation=Mutation)
+# graphql_R=GraphQLRouter(schema)
 app=FastAPI(lifespan=lifespan)
 
 

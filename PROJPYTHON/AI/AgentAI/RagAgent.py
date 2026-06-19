@@ -2,7 +2,7 @@ import asyncio
 import sys
 
 from flashrank import Ranker
-from langchain_community.embeddings import HypotheticalDocumentEmbedder
+from langchain_classic.chains import HypotheticalDocumentEmbedder
 
 if sys.platform == 'win32':
     asyncio.set_event_loop_policy(asyncio.WindowsSelectorEventLoopPolicy())
@@ -43,10 +43,17 @@ class RagAgent:
         return RagAgent.vector_store
     async def builder(self,chunks=None):
 
-        semantic = RagAgent.vector_store.as_retriever(search_type="similarity", search_kwargs={"k": 4, "filter": {
-            "user_id": {"$eq": self.user_id},
-            "conversation_id": {"$eq": self.conv_id}
-        }})
+        hyde = HypotheticalDocumentEmbedder.from_llm(
+            llm=self.llm,
+            base_embeddings=self.embedding,
+            prompt_key="web_search"
+        )
+        semantic = RagAgent.vector_store.as_retriever(search_type="similarity_score_threshold", search_kwargs={"k": 10,"score_threshold": 0.6, "filter": {
+            "user_id": {"$eq": str(self.user_id)},
+            "conversation_id": {"$eq": str(self.conv_id)}
+        },
+"embeddings": hyde
+})
         if chunks:
             bm25 = BM25Retriever.from_documents(chunks)
             bm25.k=10
@@ -56,15 +63,10 @@ class RagAgent:
             )
         else:
             retriver=semantic
-        hyde = HypotheticalDocumentEmbedder.from_llm(
-            llm=self.llm,
-            base_retriever=retriver,
-            embeddings=self.embedding
-        )
-        ranker = Ranker(model_name=self.llm)
-        reranker = FlashrankRerank(client=ranker,top_n=5)
+        ranker = Ranker(model_name="ms-marco-MiniLM-L-12-v2")
+        reranker = FlashrankRerank(client=ranker,top_n=10)
         return ContextualCompressionRetriever(
-            base_retriever=hyde,
+            base_retriever=retriver,
             base_compressor=reranker
         )
 
@@ -78,19 +80,24 @@ class RagAgent:
 
 
         text = ""
-
+        text_segments = []
         for q in query:
                 content = await retriver.ainvoke(q)
-                text += "\n\n".join(doc.page_content for doc in content if doc.page_content not in text)
+                for doc in content:
+                    clena = doc.page_content.strip()
+                    if clena and clena not in text_segments:
+                        text_segments.append(clena)
+        text += "\n\n".join(text_segments)
+        print(text)
         return f"personal_context: {text}"
 
     @staticmethod
     async def close_all():
         await close()
 # async def r():
-#     await MultiAgentService.initialise()
-#     x=MultiAgentService(1,1)
-#     await x.main("expliquer les style architectiraux")
+#
+#     x=RagAgent(1,1)
+#     await x.answer(["expliquer le concepte de langgraph"])
 # asyncio.run(r())
 
 
